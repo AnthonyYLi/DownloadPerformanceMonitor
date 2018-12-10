@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head lang="en">
+
+	<!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" th:href="@{/css/bootstrap-3.3.7.min.css}" />
+	<!-- Bootstrap theme -->
+    <link rel="stylesheet" th:href="@{/css/bootstrap-theme.min.css}" />
+    
+    <!-- Custom styles for this template -->
+    <link rel="stylesheet" th:href="@{/css/theme.css}" />
+    
+    <!-- Datepicker CSS -->
+    <link rel="stylesheet" th:href="@{/css/bootstrap-datetimepicker.css}" />
+    
+    <link rel="icon" type="image/png" th:href="@{/images/favicon.png}">
+    
+    <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
+    <script th:src="@{/js/Chart-2.7.2.bundle.js}"></script>
+    <script th:src="@{/js/bootstrap-datetimepicker.min.js}"></script>
+    
+	<title th:text="#{page.title}"></title>
+	
+</head>
+
+<body>
+
+	<!-- Static navigate bar -->
+	<nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container" th:include="header :: nav">
+      </div>
+    </nav>
+
+    <div class="container-fluid">
+		<div class="page-header">
+        	<h4>Report - Query</h4>
+      	</div>
+      
+		<div class="col-md-12">
+			<div class="input-group date col-md-2" id="datetimepicker" data-date-format="yyyy-mm-dd">
+    			
+    			<div class="input-group-addon">
+        			<span class="glyphicon glyphicon-calendar"></span>
+			    </div>
+			    <input type="text" class="form-control" value="2018-09-11" id="selectedDate" readOnly>
+			    <div class="input-group-addon" id="ajaxQuery">
+        			<span class="glyphicon glyphicon-search"></span>
+			    </div>
+			</div>
+		<!-- 	
+			<div class="col-md-10">
+				<button type="button" id="ajaxQuery" class="btn btn-default">Query</button>
+			</div>
+			
+      		<form class="form-inline">
+	      	<div class="form-group date">
+	      		<label for="InputYear">Year</label>
+	      		<input type="text" class="form-control" id="DatePicker" placeholder="2018-08-11" data-date-format="yyyy-mm-dd">
+	      	</div>
+	      	<div class="form-group">
+	      		<label for="InputMonth">Month</label>
+	      		<select class="form-control" id="month">
+				  <option>January</option>
+				  <option>February</option>
+				  <option>March</option>
+				  <option>April</option>
+				  <option>May</option>
+				</select>
+	      	</div>
+	      	<div class="checkbox">
+			  	<label class="checkbox-inline">
+				  <input type="checkbox" id="inlineCheckbox1" value="US"> US
+				</label>
+				<label class="checkbox-inline">
+				  <input type="checkbox" id="inlineCheckbox2" value="Ireland"> Ireland
+				</label>
+				<label class="checkbox-inline">
+				  <input type="checkbox" id="inlineCheckbox3" value="China"> India
+				</label>
+			</div>
+      	</form>
+      	 -->
+      </div>
+      <div class="col-md-6"><canvas id="canvas1"></canvas></div>
+      <div class="col-md-6"><canvas id="canvas2"></canvas></div>
+      <div class="col-md-6"><canvas id="canvas3"></canvas></div>
+      <div class="col-md-6"><canvas id="canvas4"></canvas></div>
+      <div class="col-md-6"><canvas id="canvas5"></canvas></div>
+      <div class="col-md-6"><canvas id="canvas6"></canvas></div>
+    </div>
+    <!-- container -->
+    
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    
+    <script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+ 	<script type="text/javascript">
+	$(function () {
+        $(".navbar-nav").find("li").each(function () {
+            var a = $(this).find("a:first")[0];
+            if ($(a).attr("href") === location.pathname) {
+                $(this).addClass("active");
+            } else {
+                $(this).removeClass("active");
+            }
+        });
+        
+		$("#ajaxQuery").click(function () {
+			$.ajax({
+				type : 'post',
+				url : './getReport',
+				contentType:"application/json;charset=utf-8",
+				data : $("#selectedDate").val(),
+				dataType : 'json',
+				success : function(data){
+					getReport(data);
+				},
+				error : function(){
+					alert("error");
+				}
+			});
+		});
+		$('#datetimepicker').datetimepicker({
+			weekStart: 1,
+	        todayBtn:  1,
+			autoclose: 1,
+			startView: 2,
+			minView: 2
+		});
+    })
+    function getReport(data) {
+		console.log($("#selectedDate").val());
+		for (j=0, len=data.length; j<len; j++) {
+			initChart("canvas"+(j+1), data[j]);
+		}
+	}
+	
+	function initChart(canvasname, data){
+		//var ctx1 = $('#canvas1');
+		var ctx = document.getElementById(canvasname).getContext('2d');
+		var myChart = new Chart(ctx, data);
+	};
+	
+	//This function is not in use, just for reference
+	function init_chart00(){
+		var barChartData = {
+				"labels": ['US', 'Slovakia', 'Mexico', 'Ireland', 'India', 'China', 'Brazil'],
+				datasets: [{
+					label: '1st Akamai IWM',
+					backgroundColor: 'rgba(255, 99, 132, 0.2)',
+					borderColor: 'rgba(255,99,132,1)',
+					borderWidth: 1,
+					data: [3.77, 1.18, 1.03, 8.72, 0.61, 1.04, 1.14]
+				}, {
+						label: '2nd Akamai IWM',
+						backgroundColor: 'rgba(54, 162, 235, 0.2)',
+						borderColor: 'rgba(54, 162, 235, 1)',
+						borderWidth: 1,
+						data: [4.09, 0.82, 1.06, 9.12, 0.63, 1.26, 1.08]
+					}, {
+						label: 'DHE IWM',
+						backgroundColor: 'rgba(255, 206, 86, 0.2)',
+						borderColor: 'rgba(255, 206, 86, 1)',
+						borderWidth: 1,
+						data: [0.41, 0.03, 0.02, 3.32, 0.05, 0.03, 0.93]
+					}]
+
+				};
+			var ctx6 = document.getElementById('canvas00').getContext('2d');
+			window.myBar = new Chart(ctx6, {
+				type: 'bar',
+				data: barChartData,
+				options: {
+					responsive: true,
+					legend: {
+						position: 'top',
+					},
+					title: {
+						display: true,
+						text: 'IWM - Offsite (VPN) Performance Test6'
+					}
+				}
+			});
+		};
+	</script>
+</body>
+</html>

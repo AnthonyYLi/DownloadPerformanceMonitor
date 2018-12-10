@@ -1,0 +1,27 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd"> 
+<html xmlns:th="http://www.thymeleaf.org">
+    <body>
+       <div th:fragment="nav">
+         <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">
+          	<img alt="Brand" th:src="@{/images/IBM-logo.jpg}">Download Performance Monitor 
+          </a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li><a th:href="@{/}">Home</a></li>
+            <li><a th:href="@{/test}">Test</a></li>
+            <li><a th:href="@{/report/dashboard}">Dashboard</a></li>
+            <li><a th:href="@{/report/query}">Reports</a></li>
+            <li><a th:href="@{/file/download}">Download</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+       </div>
+    </body>
+</html>
